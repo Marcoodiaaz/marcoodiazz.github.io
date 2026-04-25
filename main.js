@@ -82,4 +82,27 @@ function enviarAlCarrito() {
         }
     })
     .catch(err => alert("No se pudo guardar. ¿Está el backend encendido?"));
+
+    // Buscamos el botón naranja de la imagen
+const btnVaciar = document.getElementById("vaciar-carrito"); 
+
+if (btnVaciar) {
+    btnVaciar.onclick = () => {
+        if (confirm("¿Quieres borrar todos los productos del carrito?")) {
+            // Enviamos petición DELETE al servidor 
+            fetch(urlApi + "/1", { 
+                method: 'DELETE'
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert("Carrito vaciado");
+                    location.reload(); // Recarga la página para que la tabla salga vacía
+                } else {
+                    alert("No se pudo borrar. Revisa si el ID existe en tu Java.");
+                }
+            })
+            .catch(err => alert("Error de conexión con el backend"));
+        }
+    };
+}
 }
