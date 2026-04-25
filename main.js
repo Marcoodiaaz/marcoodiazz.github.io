@@ -1,69 +1,85 @@
-// La dirección de tu API REST de la Práctica 2
-const URL = "http://localhost:8080/api/carrito"; 
+// URL de mi API de la P2
+const urlApi = "http://localhost:8080/api/carrito";
 
 window.onload = () => {
-
-    //LÓGICA PARA PRODUCTOS.HTML (MOSTRAR DATOS)
+    // Detectar si estamos en la página de productos (tiene la tabla)
     const tabla = document.getElementById("tabla-productos");
     if (tabla) {
-        fetch(URL)
-            .then(res => res.json())
-            .then(data => {
-                tabla.innerHTML = ""; // Limpiar tabla antes de cargar
-                
-                // Recorremos los carritos y sus líneas de artículos
-                data.forEach(carrito => {
-                    if (carrito.lineas) {
-                        carrito.lineas.forEach(l => {
-                            tabla.innerHTML += `
-                                <tr>
-                                    <td>${l.descripcion}</td>
-                                    <td>ID Art: ${l.idArticulo}</td>
-                                    <td>${l.precioFinal}€ (Cant: ${l.unidades})</td>
-                                </tr>`;
-                        });
-                    }
-                });
-            })
-            .catch(err => console.error("Error cargando productos:", err));
+        pintarProductos();
     }
 
-    // LÓGICA PARA PEDIDO.HTML (ENVIAR DATOS)
-    const formulario = document.getElementById("form-pedido");
-    if (formulario) {
-        formulario.onsubmit = (e) => {
+    // Detectar si estamos en la de pedidos (tiene el formulario)
+    const form = document.getElementById("form-pedido");
+    if (form) {
+        form.onsubmit = function(e) {
             e.preventDefault();
-            const nuevoPedido = {
-                idUsuario: 1,
-                correoUsuario: document.getElementById("email") ? document.getElementById("email").value : "usuario@test.com",
-                lineas: [{
-                    descripcion: document.getElementById("producto").value,
-                    idArticulo: Math.floor(Math.random() * 100),
-                    unidades: 1,
-                    precioFinal: 50.0 // Precio de ejemplo
-                }]
-            };
-
-            fetch(URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(nuevoPedido)
-            })
-            .then(res => {
-                if (res.ok) {
-                    alert("¡Pedido realizado con éxito!");
-                    window.location.href = "productos.html";
-                }
-            })
-            .catch(err => alert("Error: ¿Está el backend encendido?"));
+            enviarAlCarrito();
         };
     }
-    const btnVaciar = document.getElementById("vaciar-btn");
-if (btnVaciar) {
-    btnVaciar.onclick = async () => {
-        // Aquí tendrías que iterar y borrar o tener un endpoint que borre todo
-        // Por ahora, lo más sencillo es reiniciar el backend de la P2.
-        alert("Reinicia tu aplicación de Spring Boot para limpiar la base de datos.");
-    };
-}
+
+    // Botón opcional para resetear la vista de la tabla
+    const btnReset = document.getElementById("btn-limpiar");
+    if (btnReset) {
+        btnReset.onclick = () => {
+            if (tabla) tabla.innerHTML = "";
+            alert("Vista reseteada");
+        };
+    }
 };
+
+// Función para traer los datos del Java (GET)
+function pintarProductos() {
+    const tabla = document.getElementById("tabla-productos");
+
+    fetch(urlApi)
+        .then(res => res.json())
+        .then(data => {
+            tabla.innerHTML = ""; // Limpiamos para que no se acumulen
+
+            data.forEach(carrito => {
+                // Entramos en la lista de lineas del objeto Carrito
+                if (carrito.lineas && carrito.lineas.length > 0) {
+                    carrito.lineas.forEach(l => {
+                        let fila = `<tr>
+                            <td>${l.descripcion}</td>
+                            <td>${l.idArticulo}</td>
+                            <td>${l.precioFinal}€ (x${l.unidades})</td>
+                        </tr>`;
+                        tabla.innerHTML += fila;
+                    });
+                }
+            });
+        })
+        .catch(err => {
+            console.log("Error:", err);
+            tabla.innerHTML = "<tr><td colspan='3'>Error al conectar con el servidor</td></tr>";
+        });
+}
+
+// Función para guardar (POST)
+function enviarAlCarrito() {
+    // Montamos el objeto como lo pide la Práctica 2
+    const pedido = {
+        idUsuario: 1,
+        correoUsuario: document.getElementById("email") ? document.getElementById("email").value : "alumno@comillas.edu",
+        lineas: [{
+            descripcion: document.getElementById("producto").value,
+            idArticulo: Math.floor(Math.random() * 500),
+            unidades: 1,
+            precioFinal: 49.95
+        }]
+    };
+
+    fetch(urlApi, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pedido)
+    })
+    .then(res => {
+        if (res.ok) {
+            alert("¡Pedido guardado!");
+            window.location.href = "productos.html"; // Nos vamos a la lista
+        }
+    })
+    .catch(err => alert("No se pudo guardar. ¿Está el backend encendido?"));
+}
