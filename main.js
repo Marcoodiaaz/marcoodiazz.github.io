@@ -84,7 +84,7 @@ function enviarAlCarrito() {
     .catch(err => alert("No se pudo guardar. ¿Está el backend encendido?"));
 
     // Buscamos el botón naranja de la imagen
-const btnVaciar = document.getElementById("vaciar-carrito"); 
+const btnVaciar = document.getElementById("vaciar-btn"); 
 
 if (btnVaciar) {
     btnVaciar.onclick = () => {
