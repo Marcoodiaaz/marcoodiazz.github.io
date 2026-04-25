@@ -3,7 +3,7 @@ const URL = "http://localhost:8080/api/carrito";
 
 window.onload = () => {
 
-    // --- 1. LÓGICA PARA PRODUCTOS.HTML (MOSTRAR DATOS) ---
+    //LÓGICA PARA PRODUCTOS.HTML (MOSTRAR DATOS)
     const tabla = document.getElementById("tabla-productos");
     if (tabla) {
         fetch(URL)
@@ -28,13 +28,11 @@ window.onload = () => {
             .catch(err => console.error("Error cargando productos:", err));
     }
 
-    // --- 2. LÓGICA PARA PEDIDO.HTML (ENVIAR DATOS) ---
+    // LÓGICA PARA PEDIDO.HTML (ENVIAR DATOS)
     const formulario = document.getElementById("form-pedido");
     if (formulario) {
         formulario.onsubmit = (e) => {
             e.preventDefault();
-
-            // Creamos el objeto siguiendo la estructura de tu Carrito.java
             const nuevoPedido = {
                 idUsuario: 1,
                 correoUsuario: document.getElementById("email") ? document.getElementById("email").value : "usuario@test.com",
@@ -60,4 +58,12 @@ window.onload = () => {
             .catch(err => alert("Error: ¿Está el backend encendido?"));
         };
     }
+    const btnVaciar = document.getElementById("vaciar-btn");
+if (btnVaciar) {
+    btnVaciar.onclick = async () => {
+        // Aquí tendrías que iterar y borrar o tener un endpoint que borre todo
+        // Por ahora, lo más sencillo es reiniciar el backend de la P2.
+        alert("Reinicia tu aplicación de Spring Boot para limpiar la base de datos.");
+    };
+}
 };
