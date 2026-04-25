@@ -18,7 +18,7 @@ window.onload = () => {
     }
 
     // Botón opcional para resetear la vista de la tabla
-    const btnReset = document.getElementById("btn-limpiar");
+    const btnReset = document.getElementById("vaciar-btn");
     if (btnReset) {
         btnReset.onclick = () => {
             if (tabla) tabla.innerHTML = "";
